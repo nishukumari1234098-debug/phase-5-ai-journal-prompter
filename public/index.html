@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f1eb">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Daily Journal Prompter</title>
+</head>
+<body>
+
+    <main class="page-shell">
+        <section class="journal-card" aria-labelledby="page-title">
+            <div class="card-topline">
+                <span class="brand-mark" aria-hidden="true">✦</span>
+                <span>YOUR DAILY PAUSE</span>
+            </div>
+
+            <div class="intro">
+                <p class="eyebrow">A moment for yourself</p>
+                <h1 id="page-title">AI Daily<br><em>Journal Prompter</em></h1>
+                <p class="subtitle">Notice what is moving through you. Choose a feeling, and let a thoughtful prompt open the page.</p>
+            </div>
+
+            <div class="prompt-form">
+                <label for="mood">How are you feeling today?</label>
+                <div class="controls">
+                    <select id="mood">
+                        <option value="">Select your mood</option>
+                        <option value="happy">Happy</option>
+                        <option value="stressed">Stressed</option>
+                        <option value="curious">Curious</option>
+                        <option value="excited">Excited</option>
+                        <option value="boring">Bored</option>
+                        <option value="sad">Sad</option>
+                    </select>
+                    <button id="btn" type="button">Get my prompt <span aria-hidden="true">→</span></button>
+                </div>
+            </div>
+
+            <div id="result" class="result" aria-live="polite">
+                <span class="result-icon" aria-hidden="true">✎</span>
+                <p>Your prompt will appear here, gently waiting for you.</p>
+            </div>
+
+            <footer>Take a breath <span aria-hidden="true">·</span> Write what feels true</footer>
+        </section>
+    </main>
+
+    <script>
+        let mood = document.getElementById("mood")
+        let btn = document.getElementById("btn")
+        let result = document.getElementById("result")
+
+        btn.addEventListener("click", async ()=> {
+            const response = await fetch("/journal-prompt", {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
+                }, 
+                body: JSON.stringify({mood: mood.value})
+            })
+
+            const data = await response.json()
+            
+            if(response.ok){
+                result.innerHTML = data.prompt
+            }
+            else{
+                result.innerHTML = data.message
+            }
+        })
+    </script>
+    
+</body>
+</html>
